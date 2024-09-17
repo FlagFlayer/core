@@ -37,6 +37,10 @@ INSERT INTO `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3
 (11054, -1, 1351, 1352, 1364, 11053, 0), -- Condition for respecialisation for weaponsmith sub-specialisations
 (11056, -2, 11048, 11049, 0, 0, 0); -- Condition to check if the player meets requirements for respecialisation
 
+INSERT INTO `gossip_scripts` (`id`, `delay`, `priority`, `command`, `datalong`, `datalong2`, `datalong3`, `datalong4`, `target_param1`, `target_param2`, `target_type`, `data_flags`, `dataint`, `dataint2`, `dataint3`, `dataint4`, `x`, `y`, `z`, `o`, `condition_id`, `comments`) VALUES
+(318203, 0, 0, 15, 9790, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11056, 'Cast Artisan Armorsmith'),
+(318204, 0, 0, 15, 9789, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11056, 'Cast Artisan Weaponsmith');
+
 -- Update respecialisation gossip for sub-specialisations only for respecialisation
 UPDATE `gossip_menu_option` SET `condition_id` = 11054 WHERE `menu_id` = 6089 AND `id` = 0;
 UPDATE `gossip_menu_option` SET `condition_id` = 11054 WHERE `menu_id` = 6090 AND `id` = 0;
