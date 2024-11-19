@@ -259,6 +259,17 @@ DELETE FROM `spell_chain` WHERE `spell_id` = 17039; -- Correct for Swordsmithing
 DELETE FROM `spell_chain` WHERE `spell_id` = 17040; -- Correct for Hammersmithing
 DELETE FROM `spell_chain` WHERE `spell_id` = 17041; -- Correct for Axesmithing
 
+-- Place Show Your Work quests in an Exclusive group to allow the unlocking of Membership Renewal Card on respecialisation
+UPDATE `quest_template` SET `ExclusiveGroup` = 3600 WHERE `entry` = 3639;
+UPDATE `quest_template` SET `ExclusiveGroup` = 3600 WHERE `entry` = 3641;
+UPDATE `quest_template` SET `ExclusiveGroup` = 3600 WHERE `entry` = 3633;
+
+-- Add profession spell check condidtion to Membership Renewal Card quests
+UPDATE `quest_template` SET `RequiredCondition` = 1367 WHERE `entry` = 3644; -- Correct for both goblin engineering quests
+UPDATE `quest_template` SET `RequiredCondition` = 1367 WHERE `entry` = 3646;
+UPDATE `quest_template` SET `RequiredRaces` = 178, `RequiredCondition` = 1368 WHERE `entry` = 3645; -- Correct for Oglethorpe (Gnomish engineering - horde only)
+UPDATE `quest_template` SET `RequiredCondition` = 1368 WHERE `entry` = 3647; -- Correct for Gnomish Engineering
+
 -- End of migration.
 END IF;
 END??
