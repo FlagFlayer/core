@@ -270,6 +270,9 @@ UPDATE `quest_template` SET `RequiredCondition` = 1367 WHERE `entry` = 3646;
 UPDATE `quest_template` SET `RequiredRaces` = 178, `RequiredCondition` = 1368 WHERE `entry` = 3645; -- Correct for Oglethorpe (Gnomish engineering - horde only)
 UPDATE `quest_template` SET `RequiredCondition` = 1368 WHERE `entry` = 3647; -- Correct for Gnomish Engineering
 
+-- Remove trainer spell and disable gossip for Master Elemental Shaper Krixix (remnant from an ancient incorrect implementation of teaching Smelt Elementium via training menu)
+UPDATE `creature_template` SET `npc_flags` = 0, `display_probability1` = 0, `display_total_probability` = 0, `trainer_spell` = 0 WHERE `entry` = 14401;
+
 -- End of migration.
 END IF;
 END??
