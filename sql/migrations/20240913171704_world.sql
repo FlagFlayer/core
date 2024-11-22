@@ -135,7 +135,8 @@ UPDATE `creature_template` SET `trainer_spell` = 0 WHERE `entry` = 7870 AND `pat
 UPDATE `creature_template` SET `trainer_spell` = 0 WHERE `entry` = 7871 AND `patch` = 0; -- Trainer gossip for Se'Jib (Tribal Leatherworking - Horde)
 UPDATE `creature_template` SET `trainer_spell` = 0 WHERE `entry` = 7944 AND `patch` = 0; -- Trainer gossip for Tinkmaster Overspark (Gnomish Engineering - Alliance)
 UPDATE `creature_template` SET `trainer_spell` = 0 WHERE `entry` = 8126 AND `patch` = 0; -- Trainer gossip for Nixx Sprocketspring (Goblin Engineering)
-
+UPDATE `creature_template` SET `trainer_spell` = 0 WHERE `entry` = 8738 AND `patch` = 0; -- Trainer gossip for Vazario Linkgrease (Goblin Engineering)
+ 
 INSERT INTO `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3`, `value4`, `flags`) VALUES 
 -- Note: Condition 1367 corresponds to a condition checking if the player has learnt Goblin Engineering
 -- Note: Condition 1371 corresponds to a condition checking if the player has a Goblin Engineer Membership Card in their inventory
@@ -158,6 +159,7 @@ INSERT INTO `gossip_menu` (`entry`, `text_id`, `script_id`, `condition_id`) VALU
 UPDATE `gossip_menu_option` SET `condition_id` = 11039 WHERE `menu_id` = 1467 AND `id` = 0; -- Condition for trainer gossip for Oglethorpe Obnoticus (Gnomish Engineering - Horde)
 UPDATE `gossip_menu_option` SET `condition_id` = 11038 WHERE `menu_id` = 1468 AND `id` = 0; -- Condition for trainer gossip for Tinkmaster Overspark (Gnomish Engineering - Alliance)
 UPDATE `gossip_menu_option` SET `condition_id` = 11037 WHERE `menu_id` = 1469 AND `id` = 0; -- Condition for trainer gossip for Nixx Sprocketspring (Goblin Engineering)
+UPDATE `gossip_menu_option` SET `condition_id` = 11037, `option_broadcast_text` = 4551 WHERE `menu_id` = 1465 AND `id` = 0; -- Condition for trainer gossip for Vazario Linkgrease (Goblin Engineering) + Correction to broadcast_text entry (currently uses 4553 which is the gnomish entry)
 UPDATE `gossip_menu_option` SET `condition_id` = 11021 WHERE `menu_id` = 3067 AND `id` = 0; -- Condition for trainer gossip for Peter Galen (Dragonscale Leatherworking - Alliance)
 UPDATE `gossip_menu_option` SET `condition_id` = 11020 WHERE `menu_id` = 3070 AND `id` = 0; -- Trainer gossip for Sarah Tanner (Elemental Leatherworking - Alliance)
 UPDATE `gossip_menu_option` SET `condition_id` = 11019 WHERE `menu_id` = 3072 AND `id` = 0; -- Condition for trainer gossip for Caryssia Moonhunter (Tribal Leatherworking - Alliance)
