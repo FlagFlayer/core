@@ -194,7 +194,7 @@ INSERT INTO `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3
 -- Note: Condition 1352 corresponds to a condition checking if the player has learnt Artisan Weaponsmith
 -- Note: Condition 1364 corresponds to a condition checking if the player has NOT learnt any of the weaponsmith sub-specialisations
 (11063, -1, 1351, 1352, 1364, 4018, 0), -- Condition checking for the above conditions and the patch is 1.10 or later
-(11064, -1, 11063, 10500, 0, 0, 0),    -- Condition for relearning Hammersmithing
+(11064, -1, 11063, 11050, 0, 0, 0),    -- Condition for relearning Hammersmithing
 (11065, -1, 11063, 11051, 0, 0, 0), -- Condition for relearning Axesmithing
 (11066, -1, 11063, 11052, 0, 0, 0); -- Condition for relearning Swordsmithing
 
