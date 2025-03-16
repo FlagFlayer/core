@@ -543,13 +543,6 @@ INSERT INTO `conditions` (`condition_entry`, `type`, `value1`, `value2`, `value3
 UPDATE `gossip_menu` SET `condition_id` = 4130, `text_id` = 8370 WHERE `entry` = 4015 AND `text_id` = 8368; -- Velma Warnam (currently uses an incorrect npc_text entry for gossip from Huntsman Leopold)
 
 UPDATE `gossip_menu` SET `condition_id` = 4130 WHERE `entry` = 4022 AND `text_id` = 8407; -- Xar'Ti
-
--- Remove the now deprecated columns
-ALTER TABLE `creature_template`
-	DROP COLUMN `trainer_spell`,
-	DROP COLUMN `trainer_race`,
-	DROP COLUMN `trainer_class`,
-	DROP COLUMN `trainer_type`;
     
 -- End of migration.
 END IF;
