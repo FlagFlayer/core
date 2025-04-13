@@ -10,7 +10,7 @@ INSERT INTO `migrations` VALUES ('20250412091456');
 
 INSERT INTO `creature` (`guid`, `id`, `id2`, `id3`, `id4`, `id5`, `map`, `position_x`, `position_y`, `position_z`, `orientation`, `spawntimesecsmin`, `spawntimesecsmax`, `wander_distance`, `health_percent`, `mana_percent`, `movement_type`, `spawn_flags`, `visibility_mod`, `patch_min`, `patch_max`) VALUES 
 (5331025, 16573, 0, 0, 0, 0, 0, 3291.26, -3502.08, 287.26, 2.14, 3520, 3520, 0, 100, 0, 0, 0, 0, 9, 10),
-(5331026, 16573, 0, 0, 0, 0, 0, 3285.29, -3446.640, 287.26, 4.2, 3520, 3520, 0, 100, 0, 0, 0, 0, 9, 10),
+(5331026, 16573, 0, 0, 0, 0, 0, 3285.29, -3446.640, 287.26, 4.2, 3520, 3520, 0, 100, 0, 0, 0, 0, 9, 10);
 
 INSERT INTO `creature_linking_template` (`entry`, `map`, `master_entry`, `flag`, `search_range`) VALUES 
 (16573, 533, 15956, 17415, 0);
