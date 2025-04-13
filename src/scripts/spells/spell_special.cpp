@@ -90,11 +90,11 @@ struct DespawnTargetScript : public SpellScript
         }
         return true;
     }
-}
+};
 
-SpellScript* DespawnTarget(SpellEntry const*)
+SpellScript* GetScript_DespawnTarget(SpellEntry const*)
 {
-    return new GetScript_DespawnTargetScript();
+    return new DespawnTargetScript();
 }
 
 void AddSC_special_spell_scripts()
@@ -118,6 +118,6 @@ void AddSC_special_spell_scripts()
     
     newscript = new Script;
     newscript->Name = "spell_despawn_target";
-    newscript->GetSpellScript = &GetScript_DespawnTargetScript();
+    newscript->GetSpellScript = &GetScript_DespawnTarget;
     newscript->RegisterSelf();
 }

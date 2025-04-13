@@ -75,7 +75,7 @@ struct boss_anubrekhanAI : public ScriptedAI
 
     uint32 m_uiImpaleTimer;
     uint32 m_uiLocustSwarmTimer;
-    uint32 m_uiSummonTimer
+    uint32 m_uiSummonTimer;
     uint32 m_uiCorpseScarabsTimer;
     bool haveDoneIntro;
 
@@ -144,7 +144,7 @@ struct boss_anubrekhanAI : public ScriptedAI
             return;
 
         // Impale
-        if (m_uiImpaleTimer < diff)
+        if (m_uiImpaleTimer < uiDiff)
         {
             // Cast Impale on a random target
             // Do NOT cast it when we are afflicted by locust swarm
@@ -157,11 +157,10 @@ struct boss_anubrekhanAI : public ScriptedAI
             m_uiImpaleTimer = urand(12, 18) * IN_MILLISECONDS;
         }
         else
-            m_uiImpaleTimer -= diff;
-        }
+            m_uiImpaleTimer -= uiDiff;
 
-       // Locust Swarm
-        if (m_uiLocustSwarmTimer < diff)
+        // Locust Swarm
+        if (m_uiLocustSwarmTimer < uiDiff)
         {
             if (DoCastSpellIfCan(m_creature, SPELL_LOCUSTSWARM) == CAST_OK)
             {
@@ -172,30 +171,30 @@ struct boss_anubrekhanAI : public ScriptedAI
             }
         }
         else
-            m_uiLocustSwarmTimer -= diff;
+            m_uiLocustSwarmTimer -= uiDiff;
 
         // Summon Crypt Guard after Locust Swarm
         if (m_uiSummonTimer)
         {
-            if (m_uiSummonTimer <= diff)
+            if (m_uiSummonTimer <= uiDiff)
             {
                 if (DoCastSpellIfCan(m_creature, SPELL_SUMMON_GUARD) == CAST_OK)
                     m_uiSummonTimer = 0;
             }
             else
-                m_uiSummonTimer -= diff;
+                m_uiSummonTimer -= uiDiff;
         }
     
-    // Summon Corpse Scarabs from dead Crypt Guard
-        if (m_corpseScarabsTimer)
+        // Summon Corpse Scarabs from dead Crypt Guard
+        if (m_uiCorpseScarabsTimer)
         {
-            if (m_corpseScarabsTimer <= diff)
+            if (m_uiCorpseScarabsTimer <= uiDiff)
             {
                 if (DoCastSpellIfCan(nullptr, SPELL_SPAWN_CORPSE_SCARABS) == CAST_OK)
-                    m_corpseScarabsTimer = urand(65, 105) * IN_MILLISECONDS;
+                    m_uiCorpseScarabsTimer = urand(65, 105) * IN_MILLISECONDS;
             }
             else
-                m_corpseScarabsTimer -= diff;
+                m_uiCorpseScarabsTimer -= uiDiff;
         }
         
         DoMeleeAttackIfReady();
@@ -204,6 +203,7 @@ struct boss_anubrekhanAI : public ScriptedAI
 
 struct anub_doorAI : public GameObjectAI
 {
+    bool haveDoneIntro;
     instance_naxxramas* m_pInstance;
 
     anub_doorAI(GameObject* pGo) : GameObjectAI(pGo), haveDoneIntro(false)
