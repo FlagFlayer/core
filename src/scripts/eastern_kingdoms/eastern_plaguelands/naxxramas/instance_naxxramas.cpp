@@ -1193,34 +1193,6 @@ void instance_naxxramas::ToggleKelThuzadWindows(bool setOpen)
     }
 }
 
-void instance_naxxramas::OnPlayerDeath(Player* p)
-{
-    if (m_auiEncounter[TYPE_ANUB_REKHAN] == IN_PROGRESS)
-    {
-        // On player death we spawn 5 scarabs under the player. Since the player
-        // can die from falldmg or other sources, anubs script impl of KilledUnit may not
-        // be called, thus we need to do it here.
-        if (Creature* pAnub = GetSingleCreatureFromStorage(NPC_ANUB_REKHAN))
-        {
-            //pAnub->AI()->DoCast(p, 29105, true);
-            pAnub->SendSpellGo(p, 28864);
-            for (int i = 0; i < 5; i++)
-            {
-                if (Creature* cs = pAnub->SummonCreature(16698, p->GetPositionX(), p->GetPositionY(), p->GetPositionZ(), 0,
-                    TEMPSUMMON_CORPSE_DESPAWN))
-                {
-                    cs->SetInCombatWithZone();
-                    if (Unit* csTarget = pAnub->SelectAttackingTarget(ATTACKING_TARGET_RANDOM, 0))
-                    {
-                        cs->AI()->AttackStart(csTarget);
-                        cs->AddThreat(csTarget, 5000);
-                    }
-                }
-            }
-        }
-    }
-}
-
 void instance_naxxramas::OnCreatureDeath(Creature* pCreature)
 {
     switch (pCreature->GetEntry())

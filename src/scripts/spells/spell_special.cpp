@@ -76,6 +76,27 @@ SpellScript* GetScript_DarkmoonSteamTonkCannon(SpellEntry const*)
     return new DarkmoonSteamTonkCannonScript();
 }
 
+// 29336 - Despawn Buffet
+// 29379 - Despawn Crypt Guards
+// 30134 - Despawn Boss Adds
+// 30228 - Despawn Summons
+struct DespawnTargetScript : public SpellScript
+{
+    bool OnEffectExecute(Spell* spell, SpellEffectIndex effIdx) const final
+    {
+        if (effIdx == EFFECT_INDEX_0 && spell->GetUnitTarget())
+        {
+            ((Creature*)spell->GetUnitTarget())->ForcedDespawn();
+        }
+        return true;
+    }
+}
+
+SpellScript* DespawnTarget(SpellEntry const*)
+{
+    return new GetScript_DespawnTargetScript();
+}
+
 void AddSC_special_spell_scripts()
 {
     Script* newscript;
@@ -93,5 +114,10 @@ void AddSC_special_spell_scripts()
     newscript = new Script;
     newscript->Name = "spell_darkmoon_steam_tonk_cannon";
     newscript->GetSpellScript = &GetScript_DarkmoonSteamTonkCannon;
+    newscript->RegisterSelf();
+    
+    newscript = new Script;
+    newscript->Name = "spell_despawn_target";
+    newscript->GetSpellScript = &GetScript_DespawnTargetScript();
     newscript->RegisterSelf();
 }

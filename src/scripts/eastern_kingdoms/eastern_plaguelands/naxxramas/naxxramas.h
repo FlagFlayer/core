@@ -337,7 +337,6 @@ public:
     void GetChamberCenterCoords(float &fX, float &fY, float &fZ) { fX = m_fChamberCenterX; fY = m_fChamberCenterY; fZ = m_fChamberCenterZ; }
     void ToggleKelThuzadWindows(bool setOpen);
 
-    void OnPlayerDeath(Player* p) override;
     void OnCreatureDeath(Creature* pCreature) override;
 
     void onNaxxramasAreaTrigger(Player* pPlayer, AreaTriggerEntry const* pAt);
