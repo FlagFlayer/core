@@ -762,12 +762,11 @@ void instance_naxxramas::SetData(uint32 uiType, uint32 uiData)
             m_auiEncounter[uiType] = uiData;
             if (GameObject* pGo = GetSingleGameObjectFromStorage(GO_ARAC_ANUB_DOOR))
             {
-                if (uiData == IN_PROGRESS)
-                    pGo->SetGoState(GO_STATE_READY);
-                else
-                    pGo->SetGoState(GO_STATE_ACTIVE);
+            if (uiData == IN_PROGRESS)
+                pGo->ResetDoorOrButton();
+            else
+                pGo->UseDoorOrButton(GO_ARAC_ANUB_DOOR);
             }
-            UpdateManualDoor(GO_ARAC_ANUB_GATE, uiData);
             break;
         case TYPE_FAERLINA:
             m_auiEncounter[uiType] = uiData;

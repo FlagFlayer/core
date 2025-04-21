@@ -82,13 +82,13 @@ SpellScript* GetScript_DarkmoonSteamTonkCannon(SpellEntry const*)
 // 30228 - Despawn Summons
 struct DespawnTargetScript : public SpellScript
 {
-    bool OnEffectExecute(Spell* spell, SpellEffectIndex effIdx) const final
+    void OnCast(Spell* spell) const final
     {
-        if (effIdx == EFFECT_INDEX_0 && spell->GetUnitTarget())
+        if (Unit* unitTarget = spell->GetUnitTarget())
         {
-            ((Creature*)spell->GetUnitTarget())->ForcedDespawn();
+            sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "Despawn target: %s (Entry: %u)", unitTarget->GetName(), ((Creature*)unitTarget)->GetDBTableGUIDLow());
+            ((Creature*)unitTarget)->ForcedDespawn();
         }
-        return true;
     }
 };
 

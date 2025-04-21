@@ -28,12 +28,6 @@ EndScriptData */
 #include "naxxramas.h"
 #include <vector>
 
-// todo:
-/*
-Armor check:
-https://www.youtube.com/watch?v=rmowgw2SZCA&t=60s
-*/
-
 enum AnubrekhanData
 {
     SAY_GREET1                  = 13004,
@@ -54,9 +48,6 @@ enum AnubrekhanData
     SPELL_SUMMON_GUARD          = 29508,                    // Summons 1 Crypt Guard at targeted location
     SPELL_DESPAWN_GUARDS        = 29379,                    // Remove all Crypt Guards and Corpse Scarabs
     SPELL_SPAWN_CORPSE_SCARABS  = 28961,                    // Trigger 28864 Summon 10 Corpse Scarabs from dead Crypt Guard
-
-//    SPELL_SELF_SPAWN_5          = 29105,        // These spells should spawn corpse scarabs, but only show the explosion anim.
-//    SPELL_SELF_SPAWN_10         = 28864,        // If we fix them to spawn scarbs, code must be changed to not manually spawn them too.
 };
 
 struct boss_anubrekhanAI : public ScriptedAI
@@ -67,7 +58,6 @@ struct boss_anubrekhanAI : public ScriptedAI
         if (!m_pInstance)
             sLog.Out(LOG_SCRIPTS, LOG_LVL_ERROR, "boss_anubrekhanAI::ctor failed to cast instanceData to instance_naxxramas");
 
-        haveDoneIntro = false;
         Reset();
     }
     
@@ -77,7 +67,7 @@ struct boss_anubrekhanAI : public ScriptedAI
     uint32 m_uiLocustSwarmTimer;
     uint32 m_uiSummonTimer;
     uint32 m_uiCorpseScarabsTimer;
-    bool haveDoneIntro;
+    bool m_firstBlood;
 
     void Reset() override
     {
@@ -85,6 +75,7 @@ struct boss_anubrekhanAI : public ScriptedAI
         m_uiLocustSwarmTimer      = urand(80, 120) * IN_MILLISECONDS;
         m_uiSummonTimer           = 0;
         m_uiCorpseScarabsTimer    = urand(65, 105) * IN_MILLISECONDS;
+        m_firstBlood              = false;
     }
 
     void JustReachedHome() override
@@ -97,12 +88,18 @@ struct boss_anubrekhanAI : public ScriptedAI
 
     void KilledUnit(Unit* pVictim) override
     {
-        // Scarabs are summoned by instance script when a player dies.
-        // See instance_naxxramas::OnPlayerDeath(Player*)
         if (pVictim->GetTypeId() != TYPEID_PLAYER)
             return;
-        
-        DoScriptText(SAY_SLAY, m_creature);
+
+        if (!m_firstBlood) 
+        {
+            DoScriptText(SAY_SLAY, m_creature);
+            m_firstBlood = true;
+            return;
+        }
+
+        if (urand(0, 4))
+            return;
     }
 
     void Aggro(Unit* pWho) override
@@ -130,7 +127,7 @@ struct boss_anubrekhanAI : public ScriptedAI
     void EnterEvadeMode() override
     {
         // We despawn the guardians before entering evade mode to prevent despawning also the static adds that are linked to respawn on evade
-        DoCastSpellIfCan(m_creature, SPELL_DESPAWN_GUARDS, CF_TRIGGERED);
+        DoCast(m_creature, SPELL_DESPAWN_GUARDS, true);
 
         ScriptedAI::EnterEvadeMode();
     }
@@ -139,10 +136,7 @@ struct boss_anubrekhanAI : public ScriptedAI
     {
         if (!m_creature->SelectHostileTarget() || !m_creature->GetVictim())
             return;
-
-        if (!m_pInstance->HandleEvadeOutOfHome(m_creature))
-            return;
-
+        
         // Impale
         if (m_uiImpaleTimer < uiDiff)
         {
@@ -228,13 +222,11 @@ struct anub_doorAI : public GameObjectAI
 
         if (Creature* anubRekhan = m_pInstance->GetSingleCreatureFromStorage(NPC_ANUB_REKHAN))
         {
-            if (anubRekhan->IsAlive() && !haveDoneIntro)
+            if (anubRekhan->IsAlive())
             {
                 DoScriptText(PickRandomValue(SAY_GREET1, SAY_GREET2, SAY_GREET3, SAY_GREET4, SAY_GREET5), anubRekhan);
-                haveDoneIntro = true;
             }
         }
-        me->SetFlag(GAMEOBJECT_FLAGS, GO_FLAG_NO_INTERACT);
         return false;
     }
 };
