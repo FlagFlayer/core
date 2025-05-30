@@ -27,7 +27,7 @@ INSERT INTO `creature_ai_scripts` (`id`, `delay`, `priority`, `command`, `datalo
 (1657303, 0, 0, 15, 28991, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Crypt Guard - Cast Web'),
 (1657304, 0, 0, 15, 8269, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 'Crypt Guard - Cast Enrage at 50% HP');
 
-UPDATE `creature_template` SET `ai_name` = 'EventAI' WHERE `entry`=16573;
+UPDATE `creature_template` SET `ai_name` = 'EventAI' WHERE `entry` = 16573;
 
 INSERT INTO `spell_target_position` (`id`, `target_map`, `target_position_x`, `target_position_y`, `target_position_z`, `target_orientation`, `build_min`, `build_max`) VALUES 
 (29508, 533, 3333.5, -3475.9, 287.1, 3.17, 5464, 5875);
