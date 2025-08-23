@@ -843,6 +843,42 @@ SpellCastResult Spell::CheckScriptTargeting(SpellEffectIndex effIndex, uint32 ch
     return SPELL_CAST_OK;
 }
 
+void Spell::CheckSpellScriptTargets(SpellScriptTargetBounds& bounds, UnitList& tempTargetUnitMap, UnitList& targetUnitMap, SpellEffectIndex effIndex)
+{
+    for (const auto iter : tempTargetUnitMap)
+    {
+        if (iter->GetTypeId() != TYPEID_UNIT)
+            continue;
+
+        for (SpellScriptTarget::const_iterator i_spellST = bounds.first; i_spellST != bounds.second; ++i_spellST)
+        {
+            if (i_spellST->second.CanNotHitWithSpellEffect(effIndex))
+                continue;
+
+            // only creature entries supported for this target type
+            if (i_spellST->second.targetEntry == SPELL_TARGET_TYPE_GAMEOBJECT)
+                continue;
+
+            if (iter->GetEntry() == i_spellST->second.targetEntry)
+            {
+                switch (i_spellST->second.type)
+                {
+                case SPELL_TARGET_TYPE_DEAD:
+                    if (iter->IsCreature() && static_cast<Creature*>(iter)->IsCorpse())
+                        targetUnitMap.push_back(iter);
+                    break;
+                case SPELL_TARGET_TYPE_CREATURE:
+                case SPELL_TARGET_TYPE_PLAYER:
+                    if (iter->IsAlive())
+                        targetUnitMap.push_back(iter);
+                    break;
+                }
+            }
+            break;
+        }
+    }
+}
+
 void Spell::prepareDataForTriggerSystem()
 {
     //==========================================================================================
@@ -2527,45 +2563,13 @@ void Spell::SetTargetMap(SpellEffectIndex effIndex, uint32 targetMode, UnitList&
             FillAreaTargets(bounds.first != bounds.second ? tempTargetUnitMap : targetUnitMap,
                             radius, PUSH_SRC_CENTER, SPELL_TARGETS_ALL);
 
-            for (const auto iter : tempTargetUnitMap)
-            {
-                for (SpellScriptTarget::const_iterator i_spellST = bounds.first; i_spellST != bounds.second; ++i_spellST)
-                {
-                    if (i_spellST->second.CanNotHitWithSpellEffect(effIndex))
-                        continue;
-
-                    if (iter->GetEntry() == i_spellST->second.targetEntry)
-                    {
-                        bool valid = false;
-                        switch (i_spellST->second.type)
-                        {
-                            case SPELL_TARGET_TYPE_DEAD:
-                            {
-                                if (iter->IsCreature() && ((Creature*)iter)->IsCorpse())
-                                    valid = true;
-                                break;
-                            }
-                            case SPELL_TARGET_TYPE_CREATURE:
-                            case SPELL_TARGET_TYPE_PLAYER:
-                            {
-                                if (iter->IsAlive())
-                                    valid = true;
-                                break;
-                            }
-                        }
-
-                        if (valid)
-                            targetUnitMap.push_back(iter);
-
-                        break;
-                    }
-                }
-            }
+            if (!tempTargetUnitMap.empty())
+                CheckSpellScriptTargets(bounds, tempTargetUnitMap, targetUnitMap, effIndex);
 
             // exclude caster
             if (m_casterUnit)
                 targetUnitMap.remove(m_casterUnit);
-            break;
+            
         }
         case TARGET_ENUM_UNITS_SCRIPT_AOE_AT_DEST_LOC:
         {
@@ -2581,45 +2585,11 @@ void Spell::SetTargetMap(SpellEffectIndex effIndex, uint32 targetMode, UnitList&
             UnitList tempTargetUnitMap;
             SpellScriptTargetBounds bounds = sSpellMgr.GetSpellScriptTargetBounds(m_spellInfo->Id);
             // fill real target list if no spell script target defined
-            FillAreaTargets(bounds.first != bounds.second ? tempTargetUnitMap : targetUnitMap, radius, PUSH_DEST_CENTER, SPELL_TARGETS_ALL);
+            FillAreaTargets(bounds.first != bounds.second ? tempTargetUnitMap : targetUnitMap,
+                            radius, PUSH_DEST_CENTER, SPELL_TARGETS_ALL);
 
             if (!tempTargetUnitMap.empty())
-            {
-                for (const auto iter : tempTargetUnitMap)
-                {
-                    for (SpellScriptTarget::const_iterator i_spellST = bounds.first; i_spellST != bounds.second; ++i_spellST)
-                    {
-                        if (i_spellST->second.CanNotHitWithSpellEffect(effIndex))
-                            continue;
-
-                        if (iter->GetEntry() == i_spellST->second.targetEntry)
-                        {
-                            bool valid = false;
-                            switch (i_spellST->second.type)
-                            {
-                                case SPELL_TARGET_TYPE_DEAD:
-                                {
-                                    if (iter->IsCreature() && ((Creature*)iter)->IsCorpse())
-                                        valid = true;
-                                    break;
-                                }
-                                case SPELL_TARGET_TYPE_CREATURE:
-                                case SPELL_TARGET_TYPE_PLAYER:
-                                {
-                                    if (iter->IsAlive())
-                                        valid = true;
-                                    break;
-                                }
-                            }
-
-                            if (valid)
-                                targetUnitMap.push_back(iter);
-
-                            break;
-                        }
-                    }
-                }
-            }
+                CheckSpellScriptTargets(bounds, tempTargetUnitMap, targetUnitMap, effIndex);
             else
             {
                 // remove not targetable units if spell has no script targets
