@@ -448,6 +448,7 @@ ChatCommand * ChatHandler::getCommandTable()
         { "uninvite",       SEC_GAMEMASTER,     true,  &ChatHandler::HandleGuildUninviteCommand,       "", nullptr },
         { "rank",           SEC_GAMEMASTER,     true,  &ChatHandler::HandleGuildRankCommand,           "", nullptr },
         { "rename",         SEC_BASIC_ADMIN,    true,  &ChatHandler::HandleGuildRenameCommand,         "", nullptr },
+        { "showlog",        SEC_GAMEMASTER,     true,  &ChatHandler::HandleGuildShowLogCommand,        "", nullptr },
         { nullptr,          0,                  false, nullptr,                                        "", nullptr }
     };
 
@@ -896,6 +897,7 @@ ChatCommand * ChatHandler::getCommandTable()
         { "spell_script_target",          SEC_DEVELOPER,     true,  &ChatHandler::HandleReloadSpellScriptTargetCommand,       "", nullptr },
         { "spell_scripts",                SEC_DEVELOPER,     true,  &ChatHandler::HandleReloadSpellScriptsCommand,            "", nullptr },
         { "spell_target_position",        SEC_DEVELOPER,     true,  &ChatHandler::HandleReloadSpellTargetPositionCommand,     "", nullptr },
+        { "spell_template",               SEC_DEVELOPER,     true,  &ChatHandler::HandleReloadSpellTemplateCommand,           "", nullptr },
         { "spell_threats",                SEC_DEVELOPER,     true,  &ChatHandler::HandleReloadSpellThreatsCommand,            "", nullptr },
         { "taxi_path_transitions",        SEC_DEVELOPER,     true,  &ChatHandler::HandleReloadTaxiPathTransitionsCommand,     "", nullptr },
         { "trainer_greeting",             SEC_DEVELOPER,     true,  &ChatHandler::HandleReloadTrainerGreetingCommand,         "", nullptr },
@@ -3891,6 +3893,15 @@ bool ChatHandler::ExtractRaceMask(char** text, uint32& raceMask, char const** ma
 std::string ChatHandler::GetNameLink(Player* chr) const
 {
     return playerLink(chr->GetName());
+}
+
+std::string ChatHandler::GetNameLink(uint32 guidLow) const
+{
+    std::string name;
+    if (sObjectMgr.GetPlayerNameByGUID(ObjectGuid(HIGHGUID_PLAYER, guidLow), name))
+        return playerLink(name);
+    else
+        return playerLink(std::to_string(guidLow));
 }
 
 std::string ChatHandler::GetItemLink(ItemPrototype const* pItem) const

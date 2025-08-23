@@ -3058,7 +3058,7 @@ void Spell::SetTargetMap(SpellEffectIndex effIndex, uint32 targetMode, UnitList&
                 if (m_casterUnit && m_casterUnit != pUnitTarget && std::find(tempTargetUnitMap.begin(), tempTargetUnitMap.end(), m_casterUnit) == tempTargetUnitMap.end())
                     tempTargetUnitMap.push_front(m_casterUnit);
 
-                tempTargetUnitMap.sort(TargetDistanceOrderNear(pUnitTarget));
+                tempTargetUnitMap.sort(ChainHealingOrder(pUnitTarget));
 
                 if (tempTargetUnitMap.empty())
                     break;
@@ -3091,7 +3091,7 @@ void Spell::SetTargetMap(SpellEffectIndex effIndex, uint32 targetMode, UnitList&
                     prev = *next;
                     targetUnitMap.push_back(prev);
                     tempTargetUnitMap.erase(next);
-                    tempTargetUnitMap.sort(TargetDistanceOrderNear(prev));
+                    tempTargetUnitMap.sort(ChainHealingOrder(prev));
                     next = tempTargetUnitMap.begin();
 
                     --t;
@@ -3875,11 +3875,6 @@ void Spell::cast(bool skipCheck)
             break;
         case SPELLFAMILY_PRIEST:
         {
-            // Power Word: Shield
-            // Nostalrius : Ivina : removed 27779 from cases = priest T0/T0.5 shield proc.
-            if (m_spellInfo->IsFitToFamily<SPELLFAMILY_PRIEST, CF_PRIEST_POWER_WORD_SHIELD>() && (m_spellInfo->Id != 27779))
-                AddPrecastSpell(6788);                      // Weakened Soul
-
             switch (m_spellInfo->Id)
             {
                 case 15237:
