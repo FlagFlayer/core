@@ -86,21 +86,21 @@ INSERT INTO `gossip_menu` (`entry`, `text_id`, `script_id`, `condition_id`) VALU
 (1467, 8325, 0, 11004),     -- Gossip for Oglethorpe Obnoticus
 (7058, 8322, 0, 11036),     -- Gossip for Book Soothslaying for Dummies (Engineering), and for both req
 (7058, 8326, 0, 11034),     -- Gossip for Book Soothslaying for Dummies (Leatherworking)
+(582, 1119, 0, 0),     -- Gossip sub-menu for Therum Deepforge (Forging Armour pt. 1)
+(583, 1120, 0, 0),     -- Gossip sub-menu for Therum Deepforge (Forging Armour pt. 2)
+(585, 1121, 0, 0),     -- Gossip sub-menu for Therum Deepforge (Forging Weapons pt. 1)
+(584, 1122, 0, 0);     -- Gossip sub-menu for Therum Deepforge (Forging Weapons pt. 2) (per sniff this has a lower MenuId than pt. 1)
 -- (Pending sniffed menu ids) --
 (22000, 8327, 0, 0),     -- Gossip sub-menu for Dragonscale Leatherworking (male)
 (22001, 8329, 0, 0),     -- Gossip sub-menu for Elemental Leatherworking (male)
 (22002, 8331, 0, 0),     -- Gossip sub-menu for Tribal Leatherworking (male)
 (22003, 8328, 0, 0),     -- Gossip sub-menu for Elemental Leatherworking (female)
 (22004, 8330, 0, 0),     -- Gossip sub-menu for Tribal Leatherworking (female)
--- Other gossips (Pending sniffed menu ids) --
 (22005, 1128, 0, 0),     -- Gossip sub-menu for Bengus Deepforge (Forging Armour pt. 1)
 (22006, 1129, 0, 0),     -- Gossip sub-menu for Bengus Deepforge (Forging Armour pt. 2)
 (22007, 1130, 0, 0),     -- Gossip sub-menu for Bengus Deepforge (Forging Weapons pt. 1)
 (22008, 1131, 0, 0),     -- Gossip sub-menu for Bengus Deepforge (Forging Weapons pt. 2)
-(22009, 1119, 0, 0),     -- Gossip sub-menu for Therum Deepforge (Forging Armour pt. 1)
-(22010, 1120, 0, 0),     -- Gossip sub-menu for Therum Deepforge (Forging Armour pt. 2)
-(22011, 1121, 0, 0),     -- Gossip sub-menu for Therum Deepforge (Forging Weapons pt. 1)
-(22012, 1122, 0, 0);     -- Gossip sub-menu for Therum Deepforge (Forging Weapons pt. 2)
+-- Other gossips --
 
 -- Add patch condition for base Book Soothsaying for dummies gossip (Book should have no gossip menu entry before patch 1.10)
 UPDATE `gossip_menu` SET `condition_id` = 4018 WHERE `text_id` = 8321;
