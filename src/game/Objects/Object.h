@@ -488,6 +488,9 @@ class WorldObject : public Object
         virtual ~WorldObject () override {}
 
         virtual void Update(uint32 /*update_diff*/, uint32 /*time_diff*/);
+        virtual void Heartbeat() {}
+        virtual uint32 GetHeartbeatDuration() const { return 5000; }
+        ShortTimeTracker m_heartBeatTimer;
 
         void _Create(uint32 guidlow, HighGuid guidhigh);
 

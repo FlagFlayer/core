@@ -1566,6 +1566,20 @@ void Aura::TriggerSpell()
     }
 }
 
+void Aura::HandlePeriodicFoodSpellVisualKit()
+{
+    SpellSpecific specificType = sSpellMgr.GetSpellSpecific(GetSpellProto()->Id);
+
+    bool food = specificType == SPELL_FOOD || specificType == SPELL_FOOD_AND_DRINK;
+    bool drink = specificType == SPELL_DRINK || specificType == SPELL_FOOD_AND_DRINK;
+
+    if (food)
+        GetTarget()->SendPlaySpellVisualKit(SPELL_VISUAL_KIT_FOOD);
+
+    if (drink)
+        GetTarget()->SendPlaySpellVisualKit(SPELL_VISUAL_KIT_DRINK);
+}
+
 /*********************************************************/
 /***                  AURA EFFECTS                     ***/
 /*********************************************************/
@@ -4745,30 +4759,25 @@ void Aura::HandleAuraModResistenceOfStatPercent(bool /*apply*/, bool /*Real*/)
 /********************************/
 /***      HEAL & ENERGIZE     ***/
 /********************************/
-void Aura::HandleAuraModTotalHealthPercentRegen(bool apply, bool /*Real*/)
-{
-    m_isPeriodic = apply;
-}
-
-void Aura::HandleAuraModTotalManaPercentRegen(bool apply, bool /*Real*/)
-{
-    if (m_modifier.periodictime == 0)
-        m_modifier.periodictime = 1000;
-
-    m_periodicTimer = m_modifier.periodictime;
-    m_isPeriodic = apply;
-}
-
-void Aura::HandleModRegen(bool apply, bool /*Real*/)        // eating
+// eating (2 possible auras)
+void Aura::HandleModRegen(bool apply, bool /*Real*/)
 {
     if (m_modifier.periodictime == 0)
         m_modifier.periodictime = 5000;
 
     m_periodicTimer = 5000;
     m_isPeriodic = apply;
+    HandleInitialFoodSpellVisualKit();
 }
 
-void Aura::HandleModPowerRegen(bool apply, bool Real)       // drinking
+void Aura::HandleAuraModTotalHealthPercentRegen(bool apply, bool /*Real*/)
+{
+    m_isPeriodic = apply;
+    HandleInitialFoodSpellVisualKit();
+}
+
+// drinking (2 possible auras)
+void Aura::HandleModPowerRegen(bool apply, bool Real)
 {
     if (!Real)
         return;
@@ -4789,6 +4798,17 @@ void Aura::HandleModPowerRegen(bool apply, bool Real)       // drinking
         (GetTarget())->UpdateManaRegen();
 
     m_isPeriodic = apply;
+    HandleInitialFoodSpellVisualKit();
+}
+
+void Aura::HandleAuraModTotalManaPercentRegen(bool apply, bool /*Real*/)
+{
+    if (m_modifier.periodictime == 0)
+        m_modifier.periodictime = 1000;
+
+    m_periodicTimer = m_modifier.periodictime;
+    m_isPeriodic = apply;
+    HandleInitialFoodSpellVisualKit();
 }
 
 void Aura::HandleModPowerRegenPCT(bool /*apply*/, bool Real)
@@ -7336,6 +7356,12 @@ void SpellAuraHolder::RefreshHolder()
 {
     SetAuraDuration(GetAuraMaxDuration());
     UpdateAuraDuration();
+}
+
+void Aura::Heartbeat()
+{
+    // TODO: rewrite and move remaining heartbeat effects here
+    HandlePeriodicFoodSpellVisualKit();
 }
 
 /**

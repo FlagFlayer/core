@@ -1240,7 +1240,6 @@ void Player::Update(uint32 update_diff, uint32 p_time)
     if (IsAlive())
     {
         m_regenTimer -= update_diff;
-        HandleFoodEmotes(update_diff);
         RegenerateAll();
     }
     else
@@ -1307,9 +1306,6 @@ void Player::Update(uint32 update_diff, uint32 p_time)
 
     if (m_currentCinematicEntry)
         UpdateCinematic(p_time);
-
-    // group update
-    SendUpdateToOutOfRangeGroupMembers();
 
     if (IsHasDelayedTeleport())
         TeleportTo(m_teleportDest, m_teleportOptions, m_teleportRecoverDelayed);
@@ -1499,6 +1495,12 @@ void Player::CinematicEnd()
     // When you make a new character, current area gets
     // explored after you finish watching the cinematic.
     CheckAreaExploreAndOutdoor();
+}
+
+void Player::Heartbeat()
+{
+    Unit::Heartbeat();
+    SendUpdateToOutOfRangeGroupMembers();
 }
 
 void Player::SetDeathState(DeathState s)
@@ -2261,41 +2263,6 @@ void Player::RewardRage(uint32 damage, bool attacker)
     addRage *= sWorld.getConfig(CONFIG_FLOAT_RATE_POWER_RAGE_INCOME);
 
     ModifyPower(POWER_RAGE, uint32(addRage * 10));
-}
-
-void Player::HandleFoodEmotes(uint32 diff)
-{
-    // Handles the emotes for drinking and eating.
-    // According to sniffs there is a background timer going on that repeats independed from the time window where the aura applies.
-    // That's why we dont need to reset the timer on apply. In sniffs I have seen that the first call for the spell visual is totally random, then after
-    // 5 seconds over and over again which confirms my theory that we have a independed timer.
-    if (m_foodEmoteTimer <= diff)
-    {
-        AuraList const& lModRegenAuras = GetAurasByType(SPELL_AURA_MOD_REGEN);
-        AuraList const& lModPowerRegenAuras = GetAurasByType(SPELL_AURA_MOD_POWER_REGEN);
-
-        for (const auto pAura : lModRegenAuras)
-        {
-            if (pAura->GetSpellProto()->HasAura(SPELL_AURA_MOD_REGEN) && pAura->GetSpellProto()->HasAuraInterruptFlag(AURA_INTERRUPT_STANDING_CANCELS))
-            {
-                SendPlaySpellVisualKit(SPELL_VISUAL_KIT_FOOD);
-                break;
-            }
-        }
-
-        for (const auto pAura : lModPowerRegenAuras)
-        {
-            if (pAura->GetSpellProto()->HasAura(SPELL_AURA_MOD_POWER_REGEN) && pAura->GetSpellProto()->HasAuraInterruptFlag(AURA_INTERRUPT_STANDING_CANCELS))
-            {
-                SendPlaySpellVisualKit(SPELL_VISUAL_KIT_DRINK);
-                break;
-            }
-        }
-
-        m_foodEmoteTimer = 5000;
-    }
-    else
-        m_foodEmoteTimer -= diff;
 }
 
 void Player::RegenerateAll()

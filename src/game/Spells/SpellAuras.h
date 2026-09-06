@@ -496,6 +496,9 @@ class Aura
             m_modifier.periodictime = periodicTimerMs;
         }
 
+        void HandleInitialFoodSpellVisualKit();
+        void HandlePeriodicFoodSpellVisualKit();
+
         bool IsPositive() const { return m_positive; }
         bool IsPersistent() const { return m_isPersistent; }
         bool IsAreaAura() const { return m_isAreaAura; }
@@ -558,6 +561,7 @@ class Aura
 
         bool IsLastAuraOnHolder();
         SpellModifier* GetSpellModifier() const { return m_spellmod; }
+        void Heartbeat();
     protected:
         Aura(SpellEntry const* spellproto, SpellEffectIndex eff, int32* currentBasePoints, SpellAuraHolder* holder, Unit* target, Unit* caster = nullptr, Item* castItem = nullptr);
 
