@@ -1581,10 +1581,33 @@ void Aura::TriggerSpell()
 
 void Aura::HandlePeriodicFoodSpellVisualKit()
 {
-    SpellSpecific specificType = sSpellMgr.GetSpellSpecific(GetSpellProto()->Id);
+    SpellEntry const* m_spellProto = GetSpellProto();
 
-    bool food = specificType == SPELL_FOOD || specificType == SPELL_FOOD_AND_DRINK;
-    bool drink = specificType == SPELL_DRINK || specificType == SPELL_FOOD_AND_DRINK;
+    if (m_spellProto->SpellFamilyName != SPELLFAMILY_GENERIC)
+        return;
+
+    if (!m_spellProto->HasAuraInterruptFlag(AURA_INTERRUPT_STANDING_CANCELS))
+        return;
+
+    bool food = false;
+    bool drink = false;
+
+    for (uint32 i : m_spellProto->EffectApplyAuraName)
+    {
+        switch (i)
+        {
+        case SPELL_AURA_MOD_REGEN:
+        case SPELL_AURA_OBS_MOD_HEALTH:
+            food = true;
+            break;
+        case SPELL_AURA_MOD_POWER_REGEN:
+        case SPELL_AURA_OBS_MOD_MANA:
+            drink = true;
+            break;
+        default:
+            break;
+        }
+    }
 
     if (food)
         GetTarget()->SendPlaySpellVisualKit(SPELL_VISUAL_KIT_FOOD);
@@ -4776,13 +4799,11 @@ void Aura::HandleModRegen(bool apply, bool /*Real*/)
 
     m_periodicTimer = 5000;
     m_isPeriodic = apply;
-    HandleInitialFoodSpellVisualKit();
 }
 
 void Aura::HandleAuraModTotalHealthPercentRegen(bool apply, bool /*Real*/)
 {
     m_isPeriodic = apply;
-    HandleInitialFoodSpellVisualKit();
 }
 
 // drinking (2 possible auras)
@@ -4807,7 +4828,6 @@ void Aura::HandleModPowerRegen(bool apply, bool Real)
         (GetTarget())->UpdateManaRegen();
 
     m_isPeriodic = apply;
-    HandleInitialFoodSpellVisualKit();
 }
 
 void Aura::HandleAuraModTotalManaPercentRegen(bool apply, bool /*Real*/)
@@ -4817,7 +4837,6 @@ void Aura::HandleAuraModTotalManaPercentRegen(bool apply, bool /*Real*/)
 
     m_periodicTimer = m_modifier.periodictime;
     m_isPeriodic = apply;
-    HandleInitialFoodSpellVisualKit();
 }
 
 void Aura::HandleModPowerRegenPCT(bool /*apply*/, bool Real)
