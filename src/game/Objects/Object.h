@@ -675,6 +675,7 @@ class WorldObject : public Object
     public:
         void SendObjectMessageToSet(std::unique_ptr<ServerPacket const> packet, bool self, WorldObject const* except = nullptr) const;
         void SendObjectMessageToSet(WorldPacket* data, bool self, WorldObject const* except = nullptr) const;
+        void SendMovementMessageToSet(std::unique_ptr<ServerPacket const> packet, bool self, WorldObject const* except = nullptr);
         void SendMovementMessageToSet(WorldPacket data, bool self, WorldObject const* except = nullptr);
 
         virtual void SendMessageToSetInRange(WorldPacket* data, float dist, bool self) const;
@@ -747,6 +748,8 @@ class WorldObject : public Object
         //obtain terrain data for map where this object belong...
         TerrainInfo const* GetTerrain() const;
         bool HasMMapsForCurrentMap() const;
+        virtual bool IsInWater() const;
+        virtual bool IsUnderwater() const;
 
         void SetZoneScript();
         virtual ZoneScript* GetZoneScript() const { return m_zoneScript; }
@@ -762,7 +765,6 @@ class WorldObject : public Object
         Creature* FindRandomCreature(uint32 entry, float range, bool alive = true, Creature const* except = nullptr) const;
         GameObject* FindNearestGameObject(uint32 entry, float range) const;
         GameObject* FindRandomGameObject(uint32 entry, float range) const;
-        GameObject* FindNearbyClosedDoor(float range) const;
         Player* FindNearestPlayer(float range) const;
         Player* FindNearestHostilePlayer(float range) const;
         Player* FindNearestFriendlyPlayer(float range) const;

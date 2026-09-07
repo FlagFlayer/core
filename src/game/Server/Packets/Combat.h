@@ -3,6 +3,8 @@
 
 #include "Packet.h"
 #include "ObjectGuid.h"
+#include "DamageStructs.h"
+#include "nonstd/optional.hpp"
 
 namespace WorldPackets { namespace Combat
 {
@@ -130,6 +132,40 @@ namespace WorldPackets { namespace Combat
         uint32 school = 0;  // spell school of the shield damage
 
         explicit SpellDamageShield() : ServerPacket(SMSG_SPELLDAMAGESHIELD) {}
+        void AppendBodyTo(ByteBuffer& buffer) const override;
+    };
+
+    class MeleeAttackingStateUpdate final : public ServerPacket
+    {
+    public:
+        uint32 hitInfo = 0;
+        ObjectGuid attackerGuid;
+        ObjectGuid victimGuid;
+        int32 totalDamage = 0;
+        std::vector<SubDamageInfo> subDamage;
+        uint32 victimState = 0;
+        uint32 attackerState = 0;
+        uint32 meleeSpellDamage = 0;
+        uint32 meleeSpellId = 0;
+        int32 blockedAmount = 0;
+
+        struct DebugMeleeAttackingStateInfo
+        {
+            uint32 armor = 0;
+            float critChance = 0;
+            float combatRoll = 0;
+            float missChance = 0;
+            float dodgeChance = 0;
+            float parryChance = 0;
+            float blockChance = 0;
+            float glanceChance = 0;
+            float crushChance = 0;
+            std::pair<float /*min*/, float /*max*/> damage[5] = {};
+            uint32 debugField10 = 0;
+        };
+        nonstd::optional<DebugMeleeAttackingStateInfo> debugInfo;
+
+        explicit MeleeAttackingStateUpdate() : ServerPacket(SMSG_ATTACKERSTATEUPDATE) {}
         void AppendBodyTo(ByteBuffer& buffer) const override;
     };
 

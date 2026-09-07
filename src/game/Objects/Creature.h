@@ -39,7 +39,6 @@ class Quest;
 class Player;
 class WorldSession;
 class CreatureGroup;
-
 struct GameEventCreatureData;
 
 struct CreatureCreatePos
@@ -308,7 +307,8 @@ class Creature : public Unit
         bool IsTappedBy(Player const* player) const;
         bool IsSkinnableBy(Player const* player) const { return !skinningForOthersTimer || IsTappedBy(player); }
 
-        uint32 m_spells[CREATURE_MAX_SPELLS];
+        bool GetCharmSpellCooldown(uint32 spellId, uint32& cooldown);
+        nonstd::optional<CreatureCharmSpellEntry> m_spells[CREATURE_MAX_SPELLS];
 
         float GetAttackDistance(Unit const* pl) const;
         float GetDetectionRange() const { return m_detectionDistance; }
@@ -586,6 +586,20 @@ class Creature : public Unit
         // (msecs)timer used for group loot
         uint32 GetGroupLootTimer() const { return m_groupLootTimer; }
 
+        virtual float GetFollowAngle() const;
+
+        void SetFollowTargetGuid(ObjectGuid guid)
+        {
+            m_followTarget = guid;
+        }
+        ObjectGuid GetFollowTargetGuid() const
+        {
+            if (!m_followTarget.IsEmpty())
+                return m_followTarget;
+            return GetCharmerOrOwnerGuid();
+        }
+        Unit* GetFollowTarget() const;
+
         void SetEscortable(bool escortable)
         {
             if (escortable)
@@ -642,6 +656,7 @@ class Creature : public Unit
         uint32 m_originalEntry;
 
         CreatureGroup* m_creatureGroup;
+        ObjectGuid m_followTarget;                          // To be used for follower quests. Guid of player creature follows out of combat.
 
         float m_combatStartX;
         float m_combatStartY;
