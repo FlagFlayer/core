@@ -495,9 +495,8 @@ class Aura
             m_periodicTimer = periodicTimerMs;
             m_modifier.periodictime = periodicTimerMs;
         }
-
-        void HandleInitialFoodSpellVisualKit();
-        void HandlePeriodicFoodSpellVisualKit();
+        
+        void HandlePeriodicFoodSpellVisualKit(bool apply);
 
         bool IsPositive() const { return m_positive; }
         bool IsPersistent() const { return m_isPersistent; }

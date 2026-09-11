@@ -71,6 +71,8 @@ typedef std::unordered_map<Player*, UpdateData> UpdateDataMapType;
 
 static constexpr float QUEST_SHARE_DISTANCE = 14.0f;
 
+static constexpr Milliseconds const HEARTBEAT_INTERVAL = Milliseconds(5200);
+
 //use this class to measure time between world update ticks
 //essential for units updating their spells after cells become active
 class WorldUpdateCounter
@@ -489,8 +491,7 @@ class WorldObject : public Object
 
         virtual void Update(uint32 /*update_diff*/, uint32 /*time_diff*/);
         virtual void Heartbeat() {}
-        virtual uint32 GetHeartbeatDuration() const { return 5000; }
-        ShortTimeTracker m_heartBeatTimer;
+        Milliseconds m_heartbeatTimer;
 
         void _Create(uint32 guidlow, HighGuid guidhigh);
 

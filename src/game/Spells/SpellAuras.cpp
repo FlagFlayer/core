@@ -1579,7 +1579,8 @@ void Aura::TriggerSpell()
     }
 }
 
-void Aura::HandlePeriodicFoodSpellVisualKit()
+// send food spell visual on periodic worldobject heartbeat for unit
+void Aura::HandlePeriodicFoodSpellVisualKit(bool apply)
 {
     SpellEntry const* m_spellProto = GetSpellProto();
 
@@ -1588,6 +1589,13 @@ void Aura::HandlePeriodicFoodSpellVisualKit()
 
     if (!m_spellProto->HasAuraInterruptFlag(AURA_INTERRUPT_STANDING_CANCELS))
         return;
+
+    // animation does not automatically play on apply aura
+    if (apply)
+    {
+        GetTarget()->HandleEmoteCommand(EMOTE_ONESHOT_EAT);
+        return;
+    }
 
     bool food = false;
     bool drink = false;
@@ -1611,7 +1619,7 @@ void Aura::HandlePeriodicFoodSpellVisualKit()
 
     if (food)
         GetTarget()->SendPlaySpellVisualKit(SPELL_VISUAL_KIT_FOOD);
-
+    
     if (drink)
         GetTarget()->SendPlaySpellVisualKit(SPELL_VISUAL_KIT_DRINK);
 }
@@ -4794,15 +4802,21 @@ void Aura::HandleAuraModResistenceOfStatPercent(bool /*apply*/, bool /*Real*/)
 // eating (2 possible auras)
 void Aura::HandleModRegen(bool apply, bool /*Real*/)
 {
+    if (apply)
+        HandlePeriodicFoodSpellVisualKit(apply);
+
     if (m_modifier.periodictime == 0)
         m_modifier.periodictime = 5000;
-
+    
     m_periodicTimer = 5000;
     m_isPeriodic = apply;
 }
 
 void Aura::HandleAuraModTotalHealthPercentRegen(bool apply, bool /*Real*/)
 {
+    if (apply)
+        HandlePeriodicFoodSpellVisualKit(apply);
+
     m_isPeriodic = apply;
 }
 
@@ -4825,13 +4839,21 @@ void Aura::HandleModPowerRegen(bool apply, bool Real)
     m_periodicTimer = 5000;
 
     if (m_modifier.m_miscvalue == POWER_MANA)
-        (GetTarget())->UpdateManaRegen();
+    {
+        GetTarget()->UpdateManaRegen();
+
+        if (apply)
+            HandlePeriodicFoodSpellVisualKit(apply);
+    }
 
     m_isPeriodic = apply;
 }
 
 void Aura::HandleAuraModTotalManaPercentRegen(bool apply, bool /*Real*/)
 {
+    if (apply)
+        HandlePeriodicFoodSpellVisualKit(apply);
+
     if (m_modifier.periodictime == 0)
         m_modifier.periodictime = 1000;
 
@@ -6346,13 +6368,6 @@ void Aura::PeriodicTick(SpellEntry const* sProto, AuraType auraType, uint32 data
             pCaster->DealSpellDamage(&damageInfo, true);
             break;
         }
-        case SPELL_AURA_MOD_REGEN:
-        {
-            // Eating animation
-            if (spellProto->HasAuraInterruptFlag(AURA_INTERRUPT_STANDING_CANCELS))
-                target->HandleEmoteCommand(EMOTE_ONESHOT_EAT);
-            break;
-        }
         case SPELL_AURA_MOD_POWER_REGEN:
         {
             // don't energize target if not alive, possible death persistent effects
@@ -6362,12 +6377,6 @@ void Aura::PeriodicTick(SpellEntry const* sProto, AuraType auraType, uint32 data
             Powers pt = target->GetPowerType();
             if (int32(pt) != m_modifier.m_miscvalue)
                 return;
-
-            if (spellProto->HasAuraInterruptFlag(AURA_INTERRUPT_STANDING_CANCELS))
-            {
-                // Eating animation
-                target->HandleEmoteCommand(EMOTE_ONESHOT_EAT);
-            }
 
             // Anger Management
             // amount = 1+ 16 = 17 = 3,4*5 = 10,2*5/3
@@ -7388,8 +7397,7 @@ void SpellAuraHolder::RefreshHolder()
 
 void Aura::Heartbeat()
 {
-    // TODO: rewrite and move remaining heartbeat effects here
-    HandlePeriodicFoodSpellVisualKit();
+    HandlePeriodicFoodSpellVisualKit(false);
 }
 
 /**

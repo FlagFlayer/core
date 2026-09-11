@@ -1517,7 +1517,7 @@ void WorldObject::SetVisibilityModifier(float f)
 WorldObject::WorldObject()
     :   m_isActiveObject(false), m_visibilityModifier(DEFAULT_VISIBILITY_MODIFIER), m_currMap(nullptr),
         m_mapId(0), m_instanceId(0), m_summonLimitAlert(0), m_worldMask(WORLD_DEFAULT_OBJECT), m_zoneScript(nullptr),
-        m_transport(nullptr)
+        m_transport(nullptr), m_heartbeatTimer(HEARTBEAT_INTERVAL)
 {
     m_movementInfo.stime = WorldTimer::getMSTime();
 }
@@ -1533,10 +1533,10 @@ void WorldObject::CleanupsBeforeDelete()
 
 void WorldObject::Update(uint32 update_diff, uint32 /*time_diff*/)
 {
-    m_heartBeatTimer.Update(update_diff);
-    while (m_heartBeatTimer.Passed())
+    m_heartbeatTimer -= Milliseconds(update_diff);
+    while (m_heartbeatTimer <= Milliseconds(0))
     {
-        m_heartBeatTimer.Reset(m_heartBeatTimer.GetExpiry() + GetHeartbeatDuration());
+        m_heartbeatTimer += HEARTBEAT_INTERVAL;
         Heartbeat();
     }
 
