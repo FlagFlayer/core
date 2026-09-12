@@ -71,7 +71,7 @@ typedef std::unordered_map<Player*, UpdateData> UpdateDataMapType;
 
 static constexpr float QUEST_SHARE_DISTANCE = 14.0f;
 
-static constexpr Milliseconds const HEARTBEAT_INTERVAL = Milliseconds(5200);
+static constexpr Milliseconds const HEARTBEAT_INTERVAL = Milliseconds(BATCHING_INTERVAL * 13);
 
 //use this class to measure time between world update ticks
 //essential for units updating their spells after cells become active
